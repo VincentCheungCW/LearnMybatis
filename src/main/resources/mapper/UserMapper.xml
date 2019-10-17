@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--<mapper>标签的namesapce指定了对应的类，也就是 UserMapper 接口-->
+<mapper namespace="mapper.UserMapper">
+    <!-- findById必须和接口中的方法名一样 -->
+    <!--<select>的id是findById，对应UserMapper接口的findById方法。
+    parameterType指明了findById的参数类型，不过这个属性是可以省略的。
+    <select>中是一个select语句，其中#{id}对应方法findById的参数Long id，
+    执行select查询后，返回的类型是bean.User。-->
+    <select id="findById" parameterType="java.lang.Long" resultType="bean.User">
+        select * from blog_db.user where id=#{id}
+    </select>
+</mapper>

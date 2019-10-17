@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--environments下可以配置多个environment（即环境，如开发环境、生产环境等），
+    environments的default属性指定默认用哪个环境。-->
+    <environments default="development">
+        <!--environment中可以配置事务管理器、数据库地址、用户、密码等。-->
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <!--<dataSource>用来配置数据库连接，type为POOLED意思是使用连接池，若设置成UNPOOLED，则不使用连接池。-->
+            <!--POOLED 用的是mybatis自己实现的连接池。-->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/blog_db?useUnicode=true&amp;characterEncoding=utf8"/>
+                <property name="username" value="root"/>
+                <property name="password" value=""/>
+                <!--数据库连接的更多配置-->
+                <property name="poolMaximumActiveConnections" value="10" />
+                <property name="poolTimeToWait" value="5000" />
+                <property name="poolPingEnabled" value="true"/>
+                <property name="poolPingQuery" value="select 1 from user" />
+            </dataSource>
+        </environment>
+    </environments>
+    <!--mappers与environments平级，指定 XML 映射文件的位置。
+    mapper/UserMapper.xml在resources目录下-->
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"/>
+    </mappers>
+</configuration>
