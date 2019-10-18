@@ -5,12 +5,39 @@
 
 <!--<mapper>标签的namesapce指定了对应的类，也就是 UserMapper 接口-->
 <mapper namespace="mapper.UserMapper">
+    <!--在<resultMap>中，User类中的username和表中的name对应了起来（建立了映射关系）-->
+    <resultMap id="userResult" type="bean.User">
+        <result property="userName" column="name" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
     <!-- findById必须和接口中的方法名一样 -->
     <!--<select>的id是findById，对应UserMapper接口的findById方法。
     parameterType指明了findById的参数类型，不过这个属性是可以省略的。
     <select>中是一个select语句，其中#{id}对应方法findById的参数Long id，
     执行select查询后，返回的类型是bean.User。-->
-    <select id="findById" parameterType="java.lang.Long" resultType="bean.User">
+    <select id="findById" parameterType="java.lang.Long" resultMap="userResult" resultType="bean.User">
+       --占位符#{id}中的id并非一定叫做id，只有一个变量和一个占位符的情况下，占位符的内容可以随便写。
         select * from blog_db.user where id=#{id}
     </select>
+    <select id="findOneUserByPassword" parameterType="String" resultMap="userResult" resultType="bean.User">
+        select
+        * from blog_db.user where password=#{password} order by id asc limit 1
+    </select>
+    <select id="findByPassword" parameterType="String" resultMap="userResult" resultType="bean.User">
+        select
+        * from blog_db.user where password=#{password}
+    </select>
+
+    <select id="findByNameAndPasswordV1" resultMap="userResult" resultType="bean.User">
+        select * from blog_db.user where name=#{param1} and password=#{param2}
+    </select>
+
+    <!--因为UserMapper中@Param的原因，占位符可以用#{userName}、#{password}。此处占位符也可以用#{param1}、#{param2}。-->
+    <select id="findByNameAndPasswordV2" resultMap="userResult" resultType="bean.User">
+        select * from blog_db.user where name=#{username} and password=#{password}
+    </select>
+    <select id="findByNameAndPasswordV3" resultMap="userResult" parameterType="java.util.Map" resultType="bean.User">
+        select * from blog_db.user where name=#{username} and password=#{password}
+    </select>
+
+
 </mapper>
