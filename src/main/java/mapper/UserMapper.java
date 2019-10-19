@@ -45,5 +45,37 @@ public interface UserMapper {
 
     User findByNameAndPasswordV7(@Param("user") User user);
 
+    /**
+     * 根据密码查询所有用户
+     * @param password
+     * @return
+     */
+    List<User> findByPassword(
+            @Param("password") String password,
+            @Param("orderClause") String orderClause);
+
+    /**
+     * 添加用户
+     * @return 影响的行数
+     */
+    int insertUser(User user);
+
+    /**
+     * 根据 id 更新密码
+     * @return 影响的行数
+     */
+    int updateUserPasswordById(User user);
+
+    /**
+     * 删除指定id的记录
+     * @return 影响的行数
+     */
+    int deleteById(Long id);
+
+    /**
+     * 删除id在 [minId, maxId] 范围内的记录
+     * @return 影响的行数
+     */
+    int deleteByIdRange(Long minId, Long maxId);
 
 }

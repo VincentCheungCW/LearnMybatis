@@ -175,4 +175,107 @@ public class Demo01 {
         User user = userMapper.findByNameAndPasswordV3(data);
         log.info("{}", user);
     }
+
+    /**
+     * 对查询结果排序
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_06() throws IOException {
+        SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config-dbcp.xml"));
+        SqlSession sqlSession = sessionFactory.openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        List<User> userList = userMapper.findByPassword("123", "id desc");
+        log.info("{}", userList);
+    }
+
+    /**
+     * 插入数据
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_insertUser() throws IOException {
+        boolean autoCommit = false;
+        SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config-dbcp.xml"));
+        SqlSession sqlSession = sessionFactory.openSession(autoCommit);
+
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        User user = new User();
+        user.setName("阳阳");
+        user.setEmail("xiaowei@111.com");
+        user.setPassword("456");
+
+        try {
+            int result = userMapper.insertUser(user);
+            log.info("result: {}, user: {}", result, user);
+            sqlSession.commit();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    /**
+     * 根据 id 更新密码
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_updateUser() throws IOException {
+        boolean autoCommit = false;
+        SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config-dbcp.xml"));
+        SqlSession sqlSession = sessionFactory.openSession(autoCommit);
+
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        User user = new User();
+        user.setId(3L);
+        user.setPassword("123456");
+        try {
+            int result = userMapper.updateUserPasswordById(user);
+            log.info("result: {}, user: {}", result, user);
+            sqlSession.commit();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void test_deleteUserById() throws IOException {
+        boolean autoCommit = false;
+        SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config-dbcp.xml"));
+        SqlSession sqlSession = sessionFactory.openSession(autoCommit);
+
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        try {
+            int result = userMapper.deleteById(3L);
+            log.info("result: {}", result);
+            sqlSession.commit();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void test_deleteUserByIdRange() throws IOException {
+        boolean autoCommit = false;
+        SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config-dbcp.xml"));
+        SqlSession sqlSession = sessionFactory.openSession(autoCommit);
+
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        try {
+            int result = userMapper.deleteByIdRange(1L, 2L);
+            log.info("result: {}", result);
+            sqlSession.commit();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+
 }

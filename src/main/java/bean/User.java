@@ -11,7 +11,7 @@ public class User {
      * 把下面的name改成userName测试
      */
     private Long id;
-    private String userName;
+    private String name;
     private String email;
     private String password;
 

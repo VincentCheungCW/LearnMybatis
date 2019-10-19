@@ -6,38 +6,71 @@
 <!--<mapper>标签的namesapce指定了对应的类，也就是 UserMapper 接口-->
 <mapper namespace="mapper.UserMapper">
     <!--在<resultMap>中，User类中的username和表中的name对应了起来（建立了映射关系）-->
-    <resultMap id="userResult" type="bean.User">
-        <result property="userName" column="name" javaType="String" jdbcType="VARCHAR"/>
-    </resultMap>
+    <!--<resultMap id="userResult" type="bean.User">-->
+        <!--<result property="userName" column="name" javaType="String" jdbcType="VARCHAR"/>-->
+    <!--</resultMap>-->
+
     <!-- findById必须和接口中的方法名一样 -->
     <!--<select>的id是findById，对应UserMapper接口的findById方法。
     parameterType指明了findById的参数类型，不过这个属性是可以省略的。
     <select>中是一个select语句，其中#{id}对应方法findById的参数Long id，
     执行select查询后，返回的类型是bean.User。-->
-    <select id="findById" parameterType="java.lang.Long" resultMap="userResult" resultType="bean.User">
+    <select id="findById" parameterType="java.lang.Long" resultType="bean.User">
        --占位符#{id}中的id并非一定叫做id，只有一个变量和一个占位符的情况下，占位符的内容可以随便写。
         select * from blog_db.user where id=#{id}
     </select>
-    <select id="findOneUserByPassword" parameterType="String" resultMap="userResult" resultType="bean.User">
+    <select id="findOneUserByPassword" parameterType="java.lang.String" resultType="bean.User">
         select
         * from blog_db.user where password=#{password} order by id asc limit 1
     </select>
-    <select id="findByPassword" parameterType="String" resultMap="userResult" resultType="bean.User">
-        select
-        * from blog_db.user where password=#{password}
-    </select>
+    <!--<select id="findByPassword" parameterType="java.lang.String" resultType="bean.User">-->
+        <!--select-->
+        <!--* from blog_db.user where password=#{password}-->
+    <!--</select>-->
 
-    <select id="findByNameAndPasswordV1" resultMap="userResult" resultType="bean.User">
+    <select id="findByNameAndPasswordV1" resultType="bean.User">
         select * from blog_db.user where name=#{param1} and password=#{param2}
     </select>
 
     <!--因为UserMapper中@Param的原因，占位符可以用#{userName}、#{password}。此处占位符也可以用#{param1}、#{param2}。-->
-    <select id="findByNameAndPasswordV2" resultMap="userResult" resultType="bean.User">
+    <select id="findByNameAndPasswordV2" resultType="bean.User">
         select * from blog_db.user where name=#{username} and password=#{password}
     </select>
-    <select id="findByNameAndPasswordV3" resultMap="userResult" parameterType="java.util.Map" resultType="bean.User">
+    <select id="findByNameAndPasswordV3" parameterType="java.util.Map" resultType="bean.User">
         select * from blog_db.user where name=#{username} and password=#{password}
     </select>
 
+    <!--根据密码查询所有用户并排序-->
+    <!--注意！！#{}和${}：#{}用来表示数据，${}用来填充SQL。
+        #{} 会导致 MyBatis 创建 PreparedStatement 参数并安全地设置参数，
+        ${}是简单的替换。-->
+    <select id="findByPassword" resultType="bean.User">
+        select
+        * from blog_db.user where password=#{password} order by ${orderClause}
+    </select>
 
+    <!--insertUser-->
+    <!--通过设置useGeneratedKeys和keyProperty属性，可以将生成的id注入到user对象的id字段中。-->
+    <!--useGeneratedKeys会使用JDBC的getGeneratedKeys方法来取出由数据库内部生成的主键-->
+    <insert id="insertUser" parameterType="bean.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO blog_db.user (name, email, password)
+        VALUES (#{name}, #{email}, #{password})
+    </insert>
+
+    <!--根据 id 更新密码-->
+    <!--User类，在xml映射中User的变量会被解析出来，所以可以用占位符#{password}、#{id}。-->
+    <update id="updateUserPasswordById" parameterType="bean.User">
+         UPDATE blog_db.user SET password=#{password} WHERE id=#{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM blog_db.user WHERE id=#{id}
+    </delete>
+
+    <!--CDATA的形式如下： <![CDATA[文本内容]]> 。CDATA 全名:character data。所有 XML 文档中的文本均会被解析器解析，除了 CDATA 区段.-->
+    <delete id="deleteByIdRange" parameterType="Long">
+        <![CDATA[
+        DELETE FROM blog_db.user WHERE id >= #{param1} and id <= #{param2}
+    ]]>
+    </delete>
 </mapper>
