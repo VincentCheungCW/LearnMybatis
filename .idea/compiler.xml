@@ -7,6 +7,8 @@
     <bytecodeTargetLevel target="1.8">
       <module name="LearnMybatis_main" target="1.8" />
       <module name="LearnMybatis_test" target="1.8" />
+      <module name="MybatisGeneratorDemo_main" target="1.8" />
+      <module name="MybatisGeneratorDemo_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

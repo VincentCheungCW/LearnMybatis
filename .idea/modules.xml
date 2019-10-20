@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/LearnMybatis.iml" filepath="$PROJECT_DIR$/.idea/modules/LearnMybatis.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/LearnMybatis_main.iml" filepath="$PROJECT_DIR$/.idea/modules/LearnMybatis_main.iml" group="LearnMybatis" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/LearnMybatis_test.iml" filepath="$PROJECT_DIR$/.idea/modules/LearnMybatis_test.iml" group="LearnMybatis" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MybatisGeneratorDemo/MybatisGeneratorDemo.iml" filepath="$PROJECT_DIR$/.idea/modules/MybatisGeneratorDemo/MybatisGeneratorDemo.iml" group="MybatisGeneratorDemo" />
     </modules>
   </component>
 </project>

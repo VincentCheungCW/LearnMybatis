@@ -4,7 +4,6 @@ import bean.Blog;
 import bean.User;
 import lombok.extern.slf4j.Slf4j;
 import mapper.BlogMapper;
-import mapper.UserMapper;
 import mapper.UserMapperWithAnnotation;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.RowBounds;
@@ -25,6 +24,7 @@ public class Demo03 {
 
     /**
      * 在 sql 中显式使用 limit，物理查询
+     *
      * @throws IOException
      */
     @Test
@@ -39,6 +39,7 @@ public class Demo03 {
 
     /**
      * 使用 RowBounds 进行逻辑分页查询
+     *
      * @throws IOException
      */
     @Test
@@ -53,6 +54,7 @@ public class Demo03 {
 
     /**
      * 使用 RowBounds + PageHelper 进行物理分页查询
+     *
      * @throws IOException
      */
     @Test
@@ -67,11 +69,12 @@ public class Demo03 {
 
     /**
      * 把SQL写在注解中
+     *
      * @throws IOException
      */
     @Test
     public void test_findById() throws IOException {
-        try ( SqlSession sqlSession = getSqlSession() ) {
+        try (SqlSession sqlSession = getSqlSession()) {
             UserMapperWithAnnotation userMapper = sqlSession.getMapper(UserMapperWithAnnotation.class);
             User user = userMapper.findById(1L);
             log.info("{}", user);
