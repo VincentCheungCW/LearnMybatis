@@ -18,6 +18,14 @@ public interface UserMapper {
     User findById(Long id);
 
     /**
+     * 根据id获取用户信息
+     * User:Blog一对多的关系
+     * @param id
+     * @return
+     */
+    User findByIdWithBlog(Long id);
+
+    /**
      * 根据密码，查询其中一个用户
      * 必须保证最多返回一条数据，否则会报 TooManyResultsException 错误。无数据，则返回null
      * @param password
@@ -77,5 +85,19 @@ public interface UserMapper {
      * @return 影响的行数
      */
     int deleteByIdRange(Long minId, Long maxId);
+
+    /**
+     * 根据用户名和密码查询用户。用户名可选
+     */
+    User findByName(
+            @Param("name") String name,
+            @Param("optionalPassword") String password);
+
+    /**
+     * 根据查询条件查询所有符合要求的用户
+     */
+    List<User> find(User queryCondition);
+
+
 
 }

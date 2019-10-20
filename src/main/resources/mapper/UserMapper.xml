@@ -10,13 +10,46 @@
         <!--<result property="userName" column="name" javaType="String" jdbcType="VARCHAR"/>-->
     <!--</resultMap>-->
 
+    <resultMap id="userResult" type="bean.User">
+        <result property="id" column="user_id"/>
+        <result property="name" column="user_name"/>
+        <result property="email" column="user_email"/>
+        <result property="password" column="user_password"/>
+        <collection property="blogs" ofType="bean.Blog">
+            <id property="id" column="blog_id"/>
+            <result property="ownerId" column="user_id"/>
+            <result property="title" column="blog_title"/>
+            <result property="content" column="blog_content"/>
+        </collection>
+    </resultMap>
+
+    <!--查询结果会将相同 user_id、user_name、user_email、user_password的数据收拢在一个User类
+        中，而blog_id、blog_title、blog_content分别构造Blog对象，
+        然后放入User对象的List类型的 blogs 变量中。
+        <collection>用于1对多。-->
+    <select id="findByIdWithBlog" parameterType="Long" resultMap="userResult" resultType="bean.User">
+        SELECT
+        blog_db.user.id AS user_id,
+        blog_db.user.name AS user_name,
+        blog_db.user.email AS user_email,
+        blog_db.user.password AS user_password,
+        blog_db.blog.id AS blog_id,
+        blog_db.blog.title AS blog_title,
+        blog_db.blog.content AS blog_content
+        FROM blog_db.user, blog_db.blog
+        WHERE
+        blog_db.user.id = #{id}
+        AND blog_db.user.id=blog_db.blog.owner_id;
+    </select>
+
+
     <!-- findById必须和接口中的方法名一样 -->
     <!--<select>的id是findById，对应UserMapper接口的findById方法。
     parameterType指明了findById的参数类型，不过这个属性是可以省略的。
     <select>中是一个select语句，其中#{id}对应方法findById的参数Long id，
     执行select查询后，返回的类型是bean.User。-->
+    <!--占位符#{id}中的id并非一定叫做id，只有一个变量和一个占位符的情况下，占位符的内容可以随便写。-->
     <select id="findById" parameterType="java.lang.Long" resultType="bean.User">
-       --占位符#{id}中的id并非一定叫做id，只有一个变量和一个占位符的情况下，占位符的内容可以随便写。
         select * from blog_db.user where id=#{id}
     </select>
     <select id="findOneUserByPassword" parameterType="java.lang.String" resultType="bean.User">
@@ -49,6 +82,37 @@
         * from blog_db.user where password=#{password} order by ${orderClause}
     </select>
 
+    <!--动态SQL-->
+    <!--<if>中判断 optionalPassword 是否为空，若不为空，
+        则将and password = #{optionalPassword}作为SQL的一部分。-->
+    <select id="findByName" resultType="bean.User">
+        select * from blog_db.user
+        where name=#{name}
+        <if test="optionalPassword != null">
+            and password = #{optionalPassword}
+        </if>
+    </select>
+
+    <!--注意，每个<if>中的最前面都是and，mybatis会处理好。-->
+    <select id="find" parameterType="bean.User" resultType="bean.User">
+        select * from blog_db.user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null">
+                and name = #{name}
+            </if>
+            <if test="email != null">
+                and email = #{email}
+            </if>
+            <if test="password != null">
+                and password = #{password}
+            </if>
+        </where>
+    </select>
+
+
     <!--insertUser-->
     <!--通过设置useGeneratedKeys和keyProperty属性，可以将生成的id注入到user对象的id字段中。-->
     <!--useGeneratedKeys会使用JDBC的getGeneratedKeys方法来取出由数据库内部生成的主键-->
@@ -73,4 +137,9 @@
         DELETE FROM blog_db.user WHERE id >= #{param1} and id <= #{param2}
     ]]>
     </delete>
+
+
+
+
+
 </mapper>

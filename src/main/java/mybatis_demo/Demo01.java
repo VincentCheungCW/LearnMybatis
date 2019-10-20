@@ -1,8 +1,10 @@
 package mybatis_demo;
 
+import bean.Blog;
 import bean.User;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
+import mapper.BlogMapper;
 import mapper.UserMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.Environment;
@@ -192,6 +194,38 @@ public class Demo01 {
     }
 
     /**
+     * 动态SQL
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_07() throws IOException {
+        SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config-dbcp.xml"));
+        SqlSession sqlSession = sessionFactory.openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        User user = userMapper.findByName("letian", null);
+        log.info("{}", user);
+    }
+
+    /**
+     * 动态SQL
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_08() throws IOException {
+        SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config-dbcp.xml"));
+        SqlSession sqlSession = sessionFactory.openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        User user = new User();
+        user.setId(1L);
+        List<User> users = userMapper.find(user);
+        log.info("{}", users);
+    }
+
+    /**
      * 插入数据
      *
      * @throws IOException
@@ -220,6 +254,7 @@ public class Demo01 {
 
     /**
      * 根据 id 更新密码
+     * 事务提交、回滚
      *
      * @throws IOException
      */
@@ -237,7 +272,8 @@ public class Demo01 {
         try {
             int result = userMapper.updateUserPasswordById(user);
             log.info("result: {}, user: {}", result, user);
-            sqlSession.commit();
+//            sqlSession.commit();
+            sqlSession.rollback();
         } finally {
             sqlSession.close();
         }
@@ -277,5 +313,35 @@ public class Demo01 {
         }
     }
 
+    /**
+     * 在User类中添加其他属性
+     * @throws IOException
+     */
+    @Test
+    public void test_09() throws IOException {
+        boolean autoCommit = false;
+        SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config-dbcp.xml"));
+        SqlSession sqlSession = sessionFactory.openSession(autoCommit);
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        User user = userMapper.findByIdWithBlog(1L);
+        log.info("{}", user);
+    }
+
+    /**
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_10() throws IOException {
+        boolean autoCommit = false;
+        SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config-dbcp.xml"));
+        SqlSession sqlSession = sessionFactory.openSession(autoCommit);
+        BlogMapper blogMapper = sqlSession.getMapper(BlogMapper.class);
+        Blog blog = blogMapper.findById(1L);
+        log.info("id:{}, title:{}, content:{}", blog.getId(), blog.getTitle(), blog.getContent());
+        log.info("user: {}", blog.getUser());
+    }
 
 }

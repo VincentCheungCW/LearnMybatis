@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--<mapper>标签的namesapce指定了对应的类，也就是 UserMapper 接口-->
+<mapper namespace="mapper.BlogMapper">
+    <resultMap id="blogResult" type="bean.Blog">
+        <result property="id" column="blog_id"/>
+        <result property="ownerId" column="user_id"/>
+        <result property="title" column="blog_title"/>
+        <result property="content" column="blog_content"/>
+        <association property="user"
+                     javaType="bean.User"
+                     select="findOwnerOfBlog"
+                     column="user_id" />
+    </resultMap>
+
+    <resultMap id="userResult" type="bean.User">
+        <result property="id" column="user_id"/>
+        <result property="name" column="user_name"/>
+        <result property="email" column="user_email"/>
+        <result property="password" column="user_password"/>
+    </resultMap>
+
+    <select id="findById" parameterType="Long" resultMap="blogResult" resultType="bean.Blog">
+        SELECT
+        id AS blog_id,
+        id AS user_id,
+        title AS blog_title,
+        content AS blog_content
+        FROM
+        blog
+        WHERE
+        id = #{id};
+    </select>
+
+    <select id="findOwnerOfBlog"  parameterType="int"  resultMap="userResult" resultType="bean.User">
+        SELECT
+        id user_id,
+        name user_name,
+        email user_email,
+        password user_password
+        FROM
+        user
+        WHERE
+        id=#{user_id};
+    </select>
+
+    <select id="findByUserId" resultType="bean.Blog">
+        SELECT
+        id,
+        owner_id AS ownerId,
+        title,
+        content
+        FROM
+        blog
+        WHERE
+        owner_id = #{param1}
+        ORDER BY id ASC
+        LIMIT  #{param2},  #{param3}
+    </select>
+
+    <select id="findByUserIdWithRowBounds" resultType="bean.Blog">
+        SELECT
+        id,
+        owner_id AS ownerId,
+        title,
+        content
+        FROM
+        blog
+        WHERE
+        owner_id = #{param1}
+        ORDER BY id ASC
+    </select>
+
+
+</mapper>

@@ -2,13 +2,29 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Confi 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-config.dtd">
 
 <configuration>
+    <!--延迟加载-->
+    <settings>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
     <!-- 设置别名  -->
     <typeAliases>
         <typeAlias alias="User" type="bean.User"/>
     </typeAliases>
 
+    <!--分页插件-->
+    <!--本质是mybatis的拦截器，可以获取要执行的sql，修改sql-->
+    <!--rowBoundsWithCount：默认值为false，该参数对使用 RowBounds 作为分页参数时有效。 当该参数设置为true时，使用 RowBounds 分页会进行 count 查询。-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <property name="rowBoundsWithCount" value="true"/>
+        </plugin>
+    </plugins>
+
     <environments default="development">
         <environment id="development">
+            <!--在 MyBatis 中有两种类型的事务管理器，也就是 type=[JDBC|MANAGED]-->
             <transactionManager type="JDBC"/>
             <!--使用DBCP连接池，由dataSource type指定-->
             <dataSource type="datasource.DBCPDataSourceFactory">
@@ -22,5 +38,8 @@
     </environments>
     <mappers>
         <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/BlogMapper.xml"/>
+        <mapper resource="mapper/UserMapperWithAnnotation.xml"/>
+
     </mappers>
 </configuration>
